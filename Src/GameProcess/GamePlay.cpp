@@ -52,6 +52,7 @@ void GamePlay::Initialize(
 	}
 
 	/* Map */
+	
 	voAssets->AddTexture("terrain", "Assets/terrain_ss.png", voGameWindow->voRenderer);
 	voMap = new Map(
 		"terrain", 
@@ -63,7 +64,7 @@ void GamePlay::Initialize(
 		voManager
 	);
 	voMap->LoadMap("Assets/map.map", 25, 20);
-
+	
 	/* Player */
 	voAssets->AddTexture("player", "Assets/player_animation3.png", voGameWindow->voRenderer);
 	voPlayer1->AddComponent<TransformComponent>(800.0f, 640.0f, 64, 64, 1);
@@ -78,18 +79,12 @@ void GamePlay::Initialize(
 	voLabel->AddComponent<UILabel>(10, 10, "Test String", "arial", white, voGameWindow->voRenderer, voAssets);
 
 	/* Projectiles */
-	/*
 	voAssets->AddTexture("projectile", "Assets/proj.png", voGameWindow->voRenderer);
 	voAssets->CreateProjectile(Vector2D(600, 600), Vector2D(2,  0), 200, 2, "projectile", voAssets, voGameWindow->voRenderer, &voCamera);
 	voAssets->CreateProjectile(Vector2D(600, 620), Vector2D(2,  0), 200, 2, "projectile", voAssets, voGameWindow->voRenderer, &voCamera);
 	voAssets->CreateProjectile(Vector2D(400, 600), Vector2D(2,  1), 200, 2, "projectile", voAssets, voGameWindow->voRenderer, &voCamera);
 	voAssets->CreateProjectile(Vector2D(600, 600), Vector2D(2, -1), 200, 2, "projectile", voAssets, voGameWindow->voRenderer, &voCamera);
-	*/
 
-	voTiles       = voManager->GetGroup(GROUP_LABEL::groupMap);
-	voPlayers     = voManager->GetGroup(GROUP_LABEL::groupPlayers);
-	voColliders   = voManager->GetGroup(GROUP_LABEL::groupColliders);
-	voProjectiles = voManager->GetGroup(GROUP_LABEL::groupProjectiles);
 }
 
 
@@ -113,6 +108,9 @@ void GamePlay::HandleEvent()
 
 void GamePlay::Update()
 {
+	
+
+
 	SDL_Rect playerCol = voPlayer1->GetComponent<ColliderComponent>().voCollider;
 	Vector2D playerPos = voPlayer1->GetComponent<TransformComponent>().voPosition;
 
@@ -122,9 +120,14 @@ void GamePlay::Update()
 
 	vnFrame++;
 	
-	voManager->Update();
 	voManager->Refresh();
+	voManager->Update();
 	
+	voTiles         = voManager->GetGroup(GROUP_LABEL::groupMap);
+	voPlayers		= voManager->GetGroup(GROUP_LABEL::groupPlayers);
+	voColliders		= voManager->GetGroup(GROUP_LABEL::groupColliders);
+	voProjectiles	= voManager->GetGroup(GROUP_LABEL::groupProjectiles);
+
 	for (auto& c : voColliders)
 	{
 		SDL_Rect cCol = c->GetComponent<ColliderComponent>().voCollider;
@@ -135,7 +138,6 @@ void GamePlay::Update()
 	}
 
 	/* Projectiles */
-	/*
 	for (auto& p : voProjectiles)
 	{
 		if (Collision::AABB(voPlayer1->GetComponent<ColliderComponent>().voCollider, p->GetComponent<ColliderComponent>().voCollider))
@@ -143,7 +145,9 @@ void GamePlay::Update()
 			p->Destroy();
 		}
 	}
-	*/
+	
+	/* Projectiles */
+
 	
 	voCamera.x = static_cast<int>(voPlayer1->GetComponent<TransformComponent>().voPosition.x - 400);
 	voCamera.y = static_cast<int>(voPlayer1->GetComponent<TransformComponent>().voPosition.y - 320);
@@ -166,7 +170,7 @@ void GamePlay::Close()
 void GamePlay::Render()
 {
 	SDL_RenderClear(voGameWindow->voRenderer);
-
+	
 	for (auto& t : voTiles)
 	{
 		t->Draw();
